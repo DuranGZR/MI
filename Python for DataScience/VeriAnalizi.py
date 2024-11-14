@@ -223,4 +223,122 @@ df["age2"] = df["age"]**2
 df.drop("age",axis=1).head()
 
 
+##### Loc & iloc ##############
+
+import pandas as pd
+import seaborn as sns
+
+pd.set_option('display.max_columns', None)
+df = sns.load_dataset("titanic")
+df.head()
+
+# iloc: intager based selection
+
+df.iloc[0:3]
+df.iloc[0,2]
+
+# loc: label based selection
+
+df.loc[0:3]
+
+df.iloc[0:3,0:3]
+df.loc[0:3,"age"]
+
+######## Koşullu seçim (Contitional Selection) ###########
+
+import pandas as pd
+import seaborn as sns
+
+pd.set_option('display.max_columns', None)
+df = sns.load_dataset("titanic")
+df.head()
+
+df[df["age"]>50].head()
+df[df["age"]>50]["age"].count()
+
+df.loc[df["age"]>50,["age","class"]].head()
+
+df.loc[(df["age"]>50) & (df["sex"]=="male"),["age","class"]].head()
+
+
+#### Toplulaştırma ve Gruplama (Aggregation & Gouping) ################
+
+
+import pandas as pd
+import seaborn as sns
+
+pd.set_option('display.max_columns', None)
+df = sns.load_dataset("titanic")
+df.head()
+
+df["age"].mean()
+
+df.groupby("sex")["age"].mean()
+
+df.groupby("sex").agg({"age":"mean"})
+
+df.groupby("sex").agg({"age":["sum","mean"]})
+
+df.groupby("sex").agg({"age":["sum","mean"],
+                       "embark_town":"count",
+                       "survived":"mean"})
+
+
+df.groupby(["sex","embark_town","class"]).agg({"age":"mean","survived":"mean","sex":"count"})
+
+####### Pivot Table ##########
+
+import pandas as pd
+import seaborn as sns
+
+pd.set_option('display.max_columns', None)
+df = sns.load_dataset("titanic")
+df.head()
+
+
+df.pivot_table("survived","sex","embarked")
+
+df.pivot_table("survived","sex","embarked", aggfunc="std")
+
+df.pivot_table("survived","sex",["embarked","class"])
+
+
+df["new_age"] = pd.cut(df["age"], [0,10,18,25,40,90])
+df.head()
+
+df.pivot_table("survived","sex",["new_age","class"])
+
+
+####### Apply & Lambda #####
+
+import pandas as pd
+import seaborn as sns
+
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', 500)
+df = sns.load_dataset("titanic")
+df.head()
+
+df["age2"] = df["age"]*2
+df["age3"] = df["age"]*5
+
+df[["age","age2","age3"]].apply(lambda x:x/10).head()
+
+df.loc[:,df.columns.str.contains("age")].apply(lambda x:x/10).head()
+
+
+##### Birleştirme (join) İşlemleri ###########
+
+import pandas as pd
+import numpy as np
+
+m = np.random.randint(1,30,size=(5,3))
+df1 = pd.DataFrame(m, columns=["var1", "var2", "var3"])
+df2 = df1 +99
+
+pd.concat([df1, df2], axis=1)
+
+
+
+
 
