@@ -67,21 +67,38 @@ cv_result['test_roc_auc'].mean()
 
 ### 5) Hyperparameter Optimization
 
+knn_model = KNeighborsClassifier()
+knn_model.get_params()
 
+knn_params = {"n_neighbors": range(2,50)}
 
+knn_gs_best = GridSearchCV(knn_model ,
+                           knn_params,
+                           cv = 5,
+                           n_jobs = -1, verbose=1).fit(X,y)
 
+knn_gs_best.best_params_
+# {'n_neighbors': 17}
 
+### 6) Final Model
 
+knn_final = knn_model.set_params(**knn_gs_best.best_params_).fit(X,y)
 
+cv_result = cross_validate(knn_final,
+                           X,
+                           y,
+                           cv=5,scoring=['accuracy','f1','roc_auc'])
 
+cv_result['test_accuracy'].mean()
+#accuracy 0.76
 
+cv_result['test_f1'].mean()
+#f1-score 0.61
 
+cv_result['test_roc_auc'].mean()
+# AUC 0.81
 
+# test etme
+random_user = X.sample(1)
 
-
-
-
-
-
-
-
+knn_final.predict(random_user)
